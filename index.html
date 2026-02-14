@@ -214,11 +214,14 @@
         </div>
     </div>
 
-    <audio id="bgMusic" loop style="display:none;">
-        <source src="song.mp3" type="audio/mpeg">
+       <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="О моей любви.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
 
     <script>
+        // Valentine's Day Surprise Script
         document.addEventListener('DOMContentLoaded', function() {
             const welcomeScreen = document.getElementById('welcomeScreen');
             const surpriseContainer = document.getElementById('surpriseContainer');
@@ -228,15 +231,26 @@
             const floatingHearts = document.getElementById('floatingHearts');
             const bgMusic = document.getElementById('bgMusic');
             
+            // Variable to track if music has started
+            let musicStarted = false;
+            
+            // When "Click for Surprise" button is pressed
             openBtn.addEventListener('click', function() {
                 welcomeScreen.style.display = 'none';
                 surpriseContainer.style.display = 'block';
                 
-                if (bgMusic) {
+                // Start music
+                if (bgMusic && !musicStarted) {
                     bgMusic.volume = 0.3;
-                    bgMusic.play().catch(() => {});
+                    bgMusic.play().then(() => {
+                        musicStarted = true;
+                        console.log("Music started!");
+                    }).catch(error => {
+                        console.log("Music autoplay failed:", error);
+                    });
                 }
                 
+                // Create floating hearts
                 setInterval(function() {
                     const heart = document.createElement('div');
                     heart.classList.add('heart');
@@ -254,14 +268,30 @@
                 }, 300);
             });
             
+            // When envelope is clicked
             envelope.addEventListener('click', function() {
                 letterContent.style.display = 'block';
                 letterContent.scrollIntoView({ behavior: 'smooth' });
                 
-                if (bgMusic && bgMusic.paused) {
-                    bgMusic.play().catch(() => {});
+                if (bgMusic && !musicStarted) {
+                    bgMusic.volume = 0.3;
+                    bgMusic.play().then(() => {
+                        musicStarted = true;
+                    }).catch(error => {
+                        console.log("Music play failed:", error);
+                    });
                 }
             });
+            
+            // Try to start music on first click anywhere (backup)
+            document.addEventListener('click', function startMusic() {
+                if (bgMusic && !musicStarted) {
+                    bgMusic.volume = 0.3;
+                    bgMusic.play().then(() => {
+                        musicStarted = true;
+                    }).catch(() => {});
+                }
+            }, { once: true });
         });
     </script>
 </body>
